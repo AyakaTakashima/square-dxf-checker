@@ -1,0 +1,31 @@
+{
+  "name": "square-dxf-checker",
+  "version": "1.0.0",
+  "description": "Check a dxf file to define it as square or rectangle.",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "bin": {
+    "square-dxf-checker": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AyakaTakashima/square-dxf-checker.git"
+  },
+  "keywords": [
+    "calculate",
+    "area",
+    "parse",
+    "parser",
+    "thickness",
+    "dxf"
+  ],
+  "author": "AyakaTakashima",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AyakaTakashima/square-dxf-checker/issues"
+  },
+  "homepage": "https://github.com/AyakaTakashima/square-dxf-checker#readme"
+}
