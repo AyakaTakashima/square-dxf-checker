@@ -2,12 +2,8 @@
 
 const fs = require('fs')
 
-const Argv = process.argv.slice(2)
-
-const indexOfXCoordinate = 0
-const indexOfYCoordinate = 1
-
 function Main () {
+  const Argv = process.argv.slice(2)
   const fileText = fs.readFileSync(Argv[0])
   const lines = fileText.toString().split('\r\n')
   Coordinates.find(lines)
@@ -29,9 +25,10 @@ class Coordinates {
         const differenceOfxCoordinate = (Math.round(lines[i + 2] * 10) - Math.round(lines[i + 8] * 10)) / 10
         const differenceOfyCoordinate = (Math.round(lines[i + 4] * 10) - Math.round(lines[i + 10] * 10)) / 10
 
-        if (differenceOfxCoordinate === 0 && lines[i + 13] === '210') {
+        const groupCodeInExtrudingDirection = '210'
+        if (differenceOfxCoordinate === 0 && lines[i + 13] === groupCodeInExtrudingDirection) {
           verticalLineCoordinateInSideView.push(bothEndsOfSide)
-        } else if (lines[i + 13] === '210') {
+        } else if (lines[i + 13] === groupCodeInExtrudingDirection) {
           horizontalLineCoordinateInSideView.push(bothEndsOfSide)
         } else if (differenceOfxCoordinate === 0) {
           verticalLineCoordinateInFrontView.push(bothEndsOfSide)
@@ -47,8 +44,11 @@ class Coordinates {
       console.log('ModelError: This model is not square or rectangle.\n')
     }
 
-    SideViewInfo.displayLineInfo(verticalLineCoordinateInSideView, horizontalLineCoordinateInSideView)
-    FrontViewInfo.displayLineInfo(verticalLineCoordinateInFrontView, horizontalLineCoordinateInFrontView)
+    const indexOfXCoordinate = 0
+    const indexOfYCoordinate = 1
+    const indexOfBothCoordinate = [indexOfXCoordinate, indexOfYCoordinate]
+    SideViewInfo.displayLineInfo(indexOfBothCoordinate, verticalLineCoordinateInSideView, horizontalLineCoordinateInSideView)
+    FrontViewInfo.displayLineInfo(indexOfBothCoordinate, verticalLineCoordinateInFrontView, horizontalLineCoordinateInFrontView)
   }
 
   static getAllPoints (allPoints, pareOfCoordinatesOfLine) {
@@ -82,13 +82,13 @@ class Coordinates {
 }
 
 class SideViewInfo {
-  static async displayLineInfo (verticalLineCoordinateInSideView, horizontalLineCoordinateInSideView) {
+  static async displayLineInfo (indexOfBothCoordinate, verticalLineCoordinateInSideView, horizontalLineCoordinateInSideView) {
     const heightAndWidth = []
     console.log('【Side View】')
     console.log('Vertical line in side view:\n', verticalLineCoordinateInSideView)
-    console.log(Line.verifyLine(verticalLineCoordinateInSideView, indexOfYCoordinate, heightAndWidth))
+    console.log(Line.verifyLine(verticalLineCoordinateInSideView, indexOfBothCoordinate[1], heightAndWidth))
     console.log('Horizontal line in side view:\n', horizontalLineCoordinateInSideView)
-    console.log(Line.verifyLine(horizontalLineCoordinateInSideView, indexOfXCoordinate, heightAndWidth))
+    console.log(Line.verifyLine(horizontalLineCoordinateInSideView, indexOfBothCoordinate[0], heightAndWidth))
     Coordinates.matchPointWithOtherDirectionLine(verticalLineCoordinateInSideView, horizontalLineCoordinateInSideView)
 
     if (heightAndWidth.length === 2) {
@@ -101,13 +101,13 @@ class SideViewInfo {
 }
 
 class FrontViewInfo {
-  static displayLineInfo (verticalLineCoordinateInFrontView, horizontalLineCoordinateInFrontView) {
+  static displayLineInfo (indexOfBothCoordinate, verticalLineCoordinateInFrontView, horizontalLineCoordinateInFrontView) {
     const heightAndWidth = []
     console.log('【Front View】')
     console.log('Vertical line in front view:\n', verticalLineCoordinateInFrontView)
-    console.log(Line.verifyLine(verticalLineCoordinateInFrontView, indexOfYCoordinate, heightAndWidth))
+    console.log(Line.verifyLine(verticalLineCoordinateInFrontView, indexOfBothCoordinate[1], heightAndWidth))
     console.log('Horizontal line in front view:\n', horizontalLineCoordinateInFrontView)
-    console.log(Line.verifyLine(horizontalLineCoordinateInFrontView, indexOfXCoordinate, heightAndWidth))
+    console.log(Line.verifyLine(horizontalLineCoordinateInFrontView, indexOfBothCoordinate[0], heightAndWidth))
     Coordinates.matchPointWithOtherDirectionLine(verticalLineCoordinateInFrontView, horizontalLineCoordinateInFrontView)
 
     if (heightAndWidth.length === 2) {

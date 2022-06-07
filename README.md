@@ -3,6 +3,8 @@ Square-dxf-checker can check a model written in a dxf file to define that it is 
 If the model is square or rectangle plate, this npm would show you the dxf file information, which is the coordinates, lines, area about front view.
 For side view information, square-dxf-checker will display thickness other than the coordinates, lines.
 
+This npm would be able to scan a dxf file created with Windows PC.
+
 example below:
 
 ![0q2nkepabq2xf5uup2o8r0fy66dt](https://user-images.githubusercontent.com/76944527/171401619-c0e031ef-9c68-4225-80fd-75d60cd80a98.png)
@@ -90,8 +92,8 @@ $ npm i -g square-dxf-checker
 ```
 
 ## Usage
-1. Prepare a dxf file you want scan
-2. Run square-dxf-checker as below
+1. Prepare a dxf file you want scan.
+2. Run square-dxf-checker as below.
 ```shell
 $ square-dxf-checker example.dxf
 ```
