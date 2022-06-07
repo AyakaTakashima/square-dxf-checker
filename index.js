@@ -4,8 +4,8 @@ const fs = require('fs')
 
 const Argv = process.argv.slice(2)
 
-const IndexOfXCoordinate = 0
-const IndexOfYCoordinate = 1
+const indexOfXCoordinate = 0
+const indexOfYCoordinate = 1
 
 function Main () {
   const fileText = fs.readFileSync(Argv[0])
@@ -15,65 +15,65 @@ function Main () {
 
 class Coordinates {
   static Find (lines) {
-    const VerticalLineCoordinateInSideView = []
-    const HorizontalLineCoordinateInSideView = []
-    const VerticalLineCoordinateInFrontView = []
-    const HorizontalLineCoordinateInFrontView = []
-    const OtherLines = []
+    const verticalLineCoordinateInSideView = []
+    const horizontalLineCoordinateInSideView = []
+    const verticalLineCoordinateInFrontView = []
+    const horizontalLineCoordinateInFrontView = []
+    const otherLines = []
 
     for (let i = 0; i < lines.length; i++) {
       if (lines[i] === 'AcDbLine' && lines[i - 6] !== 'Dimensions') {
-        const StartPoint = [lines[i + 2], lines[i + 4]]
-        const EndPoint = [lines[i + 8], lines[i + 10]]
-        const BothEndsOfSide = { StartPoint, EndPoint }
-        const DifferenceOfxCoordinate = (Math.round(lines[i + 2] * 10) - Math.round(lines[i + 8] * 10)) / 10
-        const DifferenceOfyCoordinate = (Math.round(lines[i + 4] * 10) - Math.round(lines[i + 10] * 10)) / 10
+        const startPoint = [lines[i + 2], lines[i + 4]]
+        const endPoint = [lines[i + 8], lines[i + 10]]
+        const bothEndsOfSide = { startPoint, endPoint }
+        const differenceOfxCoordinate = (Math.round(lines[i + 2] * 10) - Math.round(lines[i + 8] * 10)) / 10
+        const differenceOfyCoordinate = (Math.round(lines[i + 4] * 10) - Math.round(lines[i + 10] * 10)) / 10
 
-        if (DifferenceOfxCoordinate === 0 && lines[i + 13] === '210') {
-          VerticalLineCoordinateInSideView.push(BothEndsOfSide)
+        if (differenceOfxCoordinate === 0 && lines[i + 13] === '210') {
+          verticalLineCoordinateInSideView.push(bothEndsOfSide)
         } else if (lines[i + 13] === '210') {
-          HorizontalLineCoordinateInSideView.push(BothEndsOfSide)
-        } else if (DifferenceOfxCoordinate === 0) {
-          VerticalLineCoordinateInFrontView.push(BothEndsOfSide)
-        } else if (DifferenceOfyCoordinate === 0) {
-          HorizontalLineCoordinateInFrontView.push(BothEndsOfSide)
+          horizontalLineCoordinateInSideView.push(bothEndsOfSide)
+        } else if (differenceOfxCoordinate === 0) {
+          verticalLineCoordinateInFrontView.push(bothEndsOfSide)
+        } else if (differenceOfyCoordinate === 0) {
+          horizontalLineCoordinateInFrontView.push(bothEndsOfSide)
         } else {
-          OtherLines.push(BothEndsOfSide)
+          otherLines.push(bothEndsOfSide)
         }
       }
     }
 
-    if (OtherLines.length) {
+    if (otherLines.length) {
       console.log('ModelError: This model is not square or rectangle.\n')
     }
 
-    SideViewInfo.DisplayLineInfo(VerticalLineCoordinateInSideView, HorizontalLineCoordinateInSideView)
-    FrontViewInfo.DisplayLineInfo(VerticalLineCoordinateInFrontView, HorizontalLineCoordinateInFrontView)
+    SideViewInfo.DisplayLineInfo(verticalLineCoordinateInSideView, horizontalLineCoordinateInSideView)
+    FrontViewInfo.DisplayLineInfo(verticalLineCoordinateInFrontView, horizontalLineCoordinateInFrontView)
   }
 
-  static GetAllPoints (AllPoints, PareOfCoordinatesOfLine) {
+  static GetAllPoints (allPoints, pareOfCoordinatesOfLine) {
     try {
-      const Line1 = PareOfCoordinatesOfLine[0]
-      const Line2 = PareOfCoordinatesOfLine[1]
-      AllPoints.push(Line1.StartPoint[0], Line1.StartPoint[1], Line1.EndPoint[0], Line1.EndPoint[1])
-      AllPoints.push(Line2.StartPoint[0], Line2.StartPoint[1], Line2.EndPoint[0], Line2.EndPoint[1])
-      return Array.from(new Set(AllPoints)).sort()
+      const line1 = pareOfCoordinatesOfLine[0]
+      const line2 = pareOfCoordinatesOfLine[1]
+      allPoints.push(line1.startPoint[0], line1.startPoint[1], line1.endPoint[0], line1.endPoint[1])
+      allPoints.push(line2.startPoint[0], line2.startPoint[1], line2.endPoint[0], line2.endPoint[1])
+      return Array.from(new Set(allPoints)).sort()
     } catch (e) {
       console.log('')
     }
   }
 
-  static MatchPointWithOtherDirectionLine (PareOfCoordinatesOfVerticalLine, PareOfCoordinatesOfHorizontalLine) {
-    const AllPointsInVerticalLine = []
-    const AllPointsInHorizontalLine = []
-    const FourPointsInVerticalLine = Coordinates.GetAllPoints(AllPointsInVerticalLine, PareOfCoordinatesOfVerticalLine)
-    const FourPointsInHorizontalLine = Coordinates.GetAllPoints(AllPointsInHorizontalLine, PareOfCoordinatesOfHorizontalLine)
+  static MatchPointWithOtherDirectionLine (pareOfCoordinatesOfVerticalLine, pareOfCoordinatesOfHorizontalLine) {
+    const allPointsInVerticalLine = []
+    const allPointsInHorizontalLine = []
+    const fourPointsInVerticalLine = Coordinates.GetAllPoints(allPointsInVerticalLine, pareOfCoordinatesOfVerticalLine)
+    const fourPointsInHorizontalLine = Coordinates.GetAllPoints(allPointsInHorizontalLine, pareOfCoordinatesOfHorizontalLine)
 
-    console.log('Main points in vertical line:', FourPointsInVerticalLine)
-    console.log('Main points in horizontal line:', FourPointsInHorizontalLine)
-    if (typeof FourPointsInVerticalLine === 'undefined' || typeof FourPointsInHorizontalLine === 'undefined') {
+    console.log('Main points in vertical line:', fourPointsInVerticalLine)
+    console.log('Main points in horizontal line:', fourPointsInHorizontalLine)
+    if (typeof fourPointsInVerticalLine === 'undefined' || typeof fourPointsInHorizontalLine === 'undefined') {
       console.log('PointsError: There is no points for vertical or horizontal line.')
-    } else if (JSON.stringify(FourPointsInVerticalLine) === JSON.stringify(FourPointsInHorizontalLine)) {
+    } else if (JSON.stringify(fourPointsInVerticalLine) === JSON.stringify(fourPointsInHorizontalLine)) {
       console.log('Coordinates in horizontal lines and vertical lines are matching each other.\n')
     } else {
       console.log('PointsError: Coordinates in horizontal and vertical lines are not matching each other.\n')
@@ -82,17 +82,17 @@ class Coordinates {
 }
 
 class SideViewInfo {
-  static async DisplayLineInfo (VerticalLineCoordinateInSideView, HorizontalLineCoordinateInSideView) {
-    const HeightAndWidth = []
+  static async DisplayLineInfo (verticalLineCoordinateInSideView, horizontalLineCoordinateInSideView) {
+    const heightAndWidth = []
     console.log('【Side View】')
-    console.log('Vertical line in side view:\n', VerticalLineCoordinateInSideView)
-    console.log(Line.VerifyLine(VerticalLineCoordinateInSideView, IndexOfYCoordinate, HeightAndWidth))
-    console.log('Horizontal line in side view:\n', HorizontalLineCoordinateInSideView)
-    console.log(Line.VerifyLine(HorizontalLineCoordinateInSideView, IndexOfXCoordinate, HeightAndWidth))
-    Coordinates.MatchPointWithOtherDirectionLine(VerticalLineCoordinateInSideView, HorizontalLineCoordinateInSideView)
+    console.log('Vertical line in side view:\n', verticalLineCoordinateInSideView)
+    console.log(Line.VerifyLine(verticalLineCoordinateInSideView, indexOfYCoordinate, heightAndWidth))
+    console.log('Horizontal line in side view:\n', horizontalLineCoordinateInSideView)
+    console.log(Line.VerifyLine(horizontalLineCoordinateInSideView, indexOfXCoordinate, heightAndWidth))
+    Coordinates.MatchPointWithOtherDirectionLine(verticalLineCoordinateInSideView, horizontalLineCoordinateInSideView)
 
-    if (HeightAndWidth.length === 2) {
-      const Thickness = SolidInfo.GetThickness(HeightAndWidth)
+    if (heightAndWidth.length === 2) {
+      const Thickness = SolidInfo.GetThickness(heightAndWidth)
       console.log('Thickness:', Thickness, '\n')
     } else {
       return ''
@@ -101,18 +101,18 @@ class SideViewInfo {
 }
 
 class FrontViewInfo {
-  static DisplayLineInfo (VerticalLineCoordinateInFrontView, HorizontalLineCoordinateInFrontView) {
-    const HeightAndWidth = []
+  static DisplayLineInfo (verticalLineCoordinateInFrontView, horizontalLineCoordinateInFrontView) {
+    const heightAndWidth = []
     console.log('【Front View】')
-    console.log('Vertical line in front view:\n', VerticalLineCoordinateInFrontView)
-    console.log(Line.VerifyLine(VerticalLineCoordinateInFrontView, IndexOfYCoordinate, HeightAndWidth))
-    console.log('Horizontal line in front view:\n', HorizontalLineCoordinateInFrontView)
-    console.log(Line.VerifyLine(HorizontalLineCoordinateInFrontView, IndexOfXCoordinate, HeightAndWidth))
-    Coordinates.MatchPointWithOtherDirectionLine(VerticalLineCoordinateInFrontView, HorizontalLineCoordinateInFrontView)
+    console.log('Vertical line in front view:\n', verticalLineCoordinateInFrontView)
+    console.log(Line.VerifyLine(verticalLineCoordinateInFrontView, indexOfYCoordinate, heightAndWidth))
+    console.log('Horizontal line in front view:\n', horizontalLineCoordinateInFrontView)
+    console.log(Line.VerifyLine(horizontalLineCoordinateInFrontView, indexOfXCoordinate, heightAndWidth))
+    Coordinates.MatchPointWithOtherDirectionLine(verticalLineCoordinateInFrontView, horizontalLineCoordinateInFrontView)
 
-    if (HeightAndWidth.length === 2) {
-      const AreaInFrontView = SolidInfo.CalculateAreaPerSide(HeightAndWidth)
-      console.log('Area in front view:', `${HeightAndWidth[0]} * ${HeightAndWidth[1]} = ${AreaInFrontView}`)
+    if (heightAndWidth.length === 2) {
+      const areaInFrontView = SolidInfo.CalculateAreaPerSide(heightAndWidth)
+      console.log('Area in front view:', `${heightAndWidth[0]} * ${heightAndWidth[1]} = ${areaInFrontView}`)
     } else {
       return ''
     }
@@ -120,15 +120,15 @@ class FrontViewInfo {
 }
 
 class Line {
-  static VerifyLine (LineCoordinate, index, HeightAndWidth) {
+  static VerifyLine (lineCoordinate, index, heightAndWidth) {
     try {
-      const LengthOfLine1 = (Math.round(LineCoordinate[0].StartPoint[index] * 10) - Math.round(LineCoordinate[0].EndPoint[index] * 10)) / 10
-      const LengthOfLine2 = (Math.round(LineCoordinate[1].StartPoint[index] * 10) - Math.round(LineCoordinate[1].EndPoint[index] * 10)) / 10
-      console.log('Length of first line:', Math.abs(LengthOfLine1))
-      console.log('Length of second line:', Math.abs(LengthOfLine1))
-      if (Math.abs(LengthOfLine1) === Math.abs(LengthOfLine2)) {
+      const lengthOfLine1 = (Math.round(lineCoordinate[0].startPoint[index] * 10) - Math.round(lineCoordinate[0].endPoint[index] * 10)) / 10
+      const lengthOfLine2 = (Math.round(lineCoordinate[1].startPoint[index] * 10) - Math.round(lineCoordinate[1].endPoint[index] * 10)) / 10
+      console.log('Length of first line:', Math.abs(lengthOfLine1))
+      console.log('Length of second line:', Math.abs(lengthOfLine1))
+      if (Math.abs(lengthOfLine1) === Math.abs(lengthOfLine2)) {
         console.log('These lines are same length.')
-        HeightAndWidth.push(Math.abs(LengthOfLine1))
+        heightAndWidth.push(Math.abs(lengthOfLine1))
       } else {
         console.log('These lines are different length.')
       }
@@ -140,12 +140,12 @@ class Line {
 }
 
 class SolidInfo {
-  static CalculateAreaPerSide (HeightAndWidth) {
-    return Math.abs(HeightAndWidth[0]) * Math.abs(HeightAndWidth[1])
+  static CalculateAreaPerSide (heightAndWidth) {
+    return Math.abs(heightAndWidth[0]) * Math.abs(heightAndWidth[1])
   }
 
-  static GetThickness (HeightAndWidth) {
-    return HeightAndWidth[1]
+  static GetThickness (heightAndWidth) {
+    return heightAndWidth[1]
   }
 }
 
