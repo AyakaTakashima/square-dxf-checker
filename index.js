@@ -92,7 +92,7 @@ class SideViewInfo {
     Coordinates.matchPointWithOtherDirectionLine(verticalLineCoordinateInSideView, horizontalLineCoordinateInSideView)
 
     if (heightAndWidth.length === 2) {
-      const Thickness = SolidInfo.GetThickness(heightAndWidth)
+      const Thickness = SolidInfo.getThickness(heightAndWidth)
       console.log('Thickness:', Thickness, '\n')
     } else {
       return ''
@@ -144,7 +144,7 @@ class SolidInfo {
     return Math.abs(heightAndWidth[0]) * Math.abs(heightAndWidth[1])
   }
 
-  static GetThickness (heightAndWidth) {
+  static getThickness (heightAndWidth) {
     return heightAndWidth[1]
   }
 }
